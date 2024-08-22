@@ -25,4 +25,19 @@
         }
     }
 }
+
+.starred-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the minmax to fit your needs */
+    gap: 16px; /* Spacing between grid items */
+    padding: 16px;
+}
+
+.starred-grid > div {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    text-align: center;
+}
   

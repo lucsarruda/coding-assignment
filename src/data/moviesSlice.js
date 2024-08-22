@@ -1,27 +1,38 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-export const fetchMovies = createAsyncThunk('fetch-movies', async (apiUrl) => {
-    const response = await fetch(apiUrl)
-    return response.json()
-})
+export const fetchMovies = createAsyncThunk('movies/fetchMovies', async (url) => {
+  const response = await fetch(url);
+  return response.json();
+});
 
 const moviesSlice = createSlice({
-    name: 'movies',
-    initialState: { 
-        movies: [],
-        fetchStatus: '',
+  name: 'movies',
+  initialState: {
+    movies: { results: [] },
+    status: 'idle',
+    error: null,
+  },
+  reducers: {
+    appendMovies: (state, action) => {
+      state.movies.results = [...state.movies.results, ...action.payload];
     },
-    reducers: {},
-    extraReducers: (builder) => {
-        builder.addCase(fetchMovies.fulfilled, (state, action) => {
-            state.movies = action.payload
-            state.fetchStatus = 'success'
-        }).addCase(fetchMovies.pending, (state) => {
-            state.fetchStatus = 'loading'
-        }).addCase(fetchMovies.rejected, (state) => {
-            state.fetchStatus = 'error'
-        })
-    }
-})
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMovies.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchMovies.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.movies = action.payload;
+      })
+      .addCase(fetchMovies.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
 
-export default moviesSlice
+export const { appendMovies } = moviesSlice.actions;
+
+export default moviesSlice.reducer;
